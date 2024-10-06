@@ -146,7 +146,7 @@ const demacia = [
     role: "marksman",
   },
   {
-    img: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/d642b6273b4278a659d2933a93d3218c05f196e5-1920x1133.jp",
+    img: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/d642b6273b4278a659d2933a93d3218c05f196e5-1920x1133.jpg",
     name: "Xin Zhao",
     role: "fighter",
   },
