@@ -1,3 +1,4 @@
+const { isAuth } = require("../../middlewares/auth");
 const {
   deleteChampions,
   getChampionsByRole,
