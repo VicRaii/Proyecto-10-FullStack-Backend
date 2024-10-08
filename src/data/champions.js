@@ -709,7 +709,7 @@ const runeterra = [
   },
   {
     img: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/2ac0d07605a4cb49058640a3477274f90003265f-1215x717.jpg",
-    name: "Kindres",
+    name: "Kindred",
     role: "marksman",
   },
   {
