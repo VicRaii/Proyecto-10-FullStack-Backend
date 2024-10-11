@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "user"],
       default: "user",
     },
-    favorites: {
+    favourites: {
       type: mongoose.Types.ObjectId,
       required: false,
       ref: "champions",
