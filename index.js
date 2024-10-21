@@ -21,5 +21,7 @@ app.use("*", (req, res, next) => {
 app.use(errorHandler);
 
 app.listen(3000, () => {
-  console.log("Server started on http://localhost:3000");
+  console.log(
+    "Server started on https://proyecto-10-full-stack-7cq8sqcm0-vicraiis-projects.vercel.app/?vercelToolbarCode=uSBvuJ9AF3v4vjs"
+  );
 });
