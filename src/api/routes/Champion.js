@@ -12,7 +12,7 @@ const championsRouter = require("express").Router();
 
 championsRouter.get("/role/:role", getChampionsByRole);
 championsRouter.get("/:id", getChampionsById);
-championsRouter.get("/", getChampions);
+championsRouter.get("/", isAuth, getChampions);
 championsRouter.post("/", postChampions);
 championsRouter.put("/:id", updateChampions);
 championsRouter.delete("/:id", deleteChampions);
