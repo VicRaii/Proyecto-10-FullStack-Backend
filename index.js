@@ -8,18 +8,17 @@ const errorHandler = require("./src/middlewares/errorHandler");
 const app = express();
 
 app.use(express.json());
-const cors = require("cors");
 
-app.use(
-  cors({
-    origin: "https://proyecto-10-full-stack-frontend.vercel.app",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+const corsOptions = {
+  origin: "https://proyecto-10-full-stack-frontend.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 
-app.options("*", cors());
+app.use(cors(corsOptions));
+
+app.options("*", cors(corsOptions));
 
 connectDB();
 
@@ -32,7 +31,5 @@ app.use("*", (req, res, next) => {
 app.use(errorHandler);
 
 app.listen(3000, () => {
-  console.log(
-    "Server started on https://proyecto-10-full-stack-frontend.vercel.app"
-  );
+  console.log("Server started on port 3000");
 });
