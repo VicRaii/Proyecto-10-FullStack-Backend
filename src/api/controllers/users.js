@@ -2,6 +2,15 @@ const bcrypt = require("bcrypt");
 const User = require("../models/users");
 const { generateSign } = require("../../config/jwt");
 
+const getUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    return res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const registerUser = async (req, res, next) => {
   try {
     const { userName, email, password } = req.body;
@@ -98,11 +107,9 @@ const updateUserRole = async (req, res, next) => {
     // Validar que el rol esté en el conjunto permitido
     const validRoles = ["admin", "user"];
     if (!validRoles.includes(role)) {
-      return res
-        .status(400)
-        .json({
-          message: `Invalid role. Allowed roles: ${validRoles.join(", ")}`,
-        });
+      return res.status(400).json({
+        message: `Invalid role. Allowed roles: ${validRoles.join(", ")}`,
+      });
     }
 
     // Verificar si el usuario existe
