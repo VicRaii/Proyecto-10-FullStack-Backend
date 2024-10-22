@@ -8,13 +8,17 @@ const errorHandler = require("./src/middlewares/errorHandler");
 const app = express();
 
 app.use(express.json());
+const cors = require("cors");
+
 app.use(
   cors({
     origin: "https://proyecto-10-full-stack-frontend.vercel.app",
-    methods: "GET,POST,PUT,DELETE",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.options("*", cors());
 
 connectDB();
