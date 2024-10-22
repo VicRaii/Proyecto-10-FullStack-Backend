@@ -7,7 +7,8 @@ const errorHandler = (err, req, res, next) => {
 
   // Responder con un mensaje de error más detallado
   res.status(statusCode).json({
-    message: err.message || "Ocurrió un error en el servidor",
+    message:
+      err.message || "An unexpected error occurred. Please try again later.",
     stack: process.env.NODE_ENV === "development" ? err.stack : {}, // Mostrar el stack solo en desarrollo
   });
 };
