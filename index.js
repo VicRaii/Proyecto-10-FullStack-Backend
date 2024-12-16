@@ -10,7 +10,8 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-  origin: "https://proyecto-10-full-stack-frontend.vercel.app",
+  // origin: "https://proyecto-10-full-stack-frontend.vercel.app",
+  origin: "http://localhost:5173", //! BORRAR AL TERMINAR PRUEBAS
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -30,5 +31,5 @@ app.use("*", (req, res, next) => {
 app.use(errorHandler);
 
 app.listen(3000, () => {
-  console.log("Server started on port 3000");
+  console.log("Server started on: http://localhost:3000/");
 });

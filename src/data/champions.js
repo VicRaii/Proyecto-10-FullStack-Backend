@@ -426,6 +426,11 @@ const targon = [
 
 const noxus = [
   {
+    img: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/fe4125e7d5135486c5bb6941641e53316fb90c59-1920x1080.jpg",
+    name: "Ambessa",
+    role: "fighter",
+  },
+  {
     img: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/731da6d8643ac159faee6cb308706bbf25230083-1920x1080.jpg",
     name: "Briar",
     role: "fighter",
