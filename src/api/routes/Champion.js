@@ -4,8 +4,8 @@ const {
   getChampionsByRole,
   getChampionsById,
   getChampions,
-  postChampions,
   updateChampions,
+  postChampions,
 } = require("../controllers/Champion");
 
 const championsRouter = require("express").Router();
