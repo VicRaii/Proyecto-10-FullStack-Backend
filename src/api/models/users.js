@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema(
       enum: ['admin', 'user'],
       default: 'user'
     },
+    profilePicture: {
+      type: String,
+      default: null
+    },
     favourites: {
       type: mongoose.Types.ObjectId,
       required: false,

@@ -13,7 +13,10 @@ const getUsers = async (req, res, next) => {
 
 const registerUser = async (req, res, next) => {
   try {
+    console.log('Request file:', req.file) // Verifica si el archivo está siendo recibido correctamente
+
     const { userName, email, password } = req.body
+    const profilePicture = req.file ? req.file.path : null
 
     if (!userName || !email || !password) {
       return res.status(400).json({ message: 'All fields are required' })
@@ -47,12 +50,14 @@ const registerUser = async (req, res, next) => {
       userName,
       email,
       password,
+      profilePicture, // Asegúrate de que se guarda correctamente la URL de Cloudinary
       role: 'user'
     })
 
     const userSaved = await newUser.save()
-    return res.status(201).json(userSaved)
+    return res.status(201).json(userSaved) // Devuelve el usuario con la URL de la imagen
   } catch (error) {
+    console.error('Server Error:', error) // Asegúrate de que el error esté siendo logueado
     next(error)
   }
 }
@@ -84,7 +89,10 @@ const loginUser = async (req, res, next) => {
       token
     })
   } catch (error) {
-    next(error)
+    console.error('Register Error:', error)
+    return res
+      .status(500)
+      .json({ message: 'An unexpected error occurred', error: error.message })
   }
 }
 
