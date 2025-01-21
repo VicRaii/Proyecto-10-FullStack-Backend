@@ -1,53 +1,62 @@
-const User = require("../api/models/users");
-const { verifyJwt } = require("../config/jwt");
+const User = require('../api/models/users')
+const { verifyJwt } = require('../config/jwt')
 
 const isAuth = async (req, res, next) => {
   try {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization?.replace('Bearer ', '')
     if (!token) {
-      const error = new Error("Invalid authorization");
-      error.statuscode = 401;
-      throw error;
-    }
-    const parsedToken = token.replace("Bearer ", "");
-    const { id } = verifyJwt(parsedToken);
-    const user = await User.findById(id);
-    if (!user) {
-      const error = new Error("Invalid user");
-      error.statuscode = 401;
-      throw error;
+      return res.status(401).json({ message: 'Authorization token missing' })
     }
 
-    user.password = null;
-    req.user = user;
-    next();
+    const { id } = verifyJwt(token) // Verifica y decodifica el token
+    const user = await User.findById(id) // Busca el usuario por ID en la base de datos
+    if (!user) {
+      return res.status(401).json({ message: 'User not found or invalid' })
+    }
+
+    // Elimina el campo de contraseña por seguridad
+    user.password = undefined
+    req.user = user // Asocia el usuario autenticado con la solicitud
+    next()
   } catch (error) {
-    next(error);
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token' })
+    }
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Token has expired' })
+    }
+    next(error) // Maneja otros errores
   }
-};
+}
 
 const isAdmin = async (req, res, next) => {
   try {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization?.replace('Bearer ', '')
     if (!token) {
-      const error = new Error("Not Authorized");
-      error.statusCode = 401;
-      throw error;
+      return res.status(401).json({ message: 'Authorization token missing' })
     }
-    const parsedToken = token.replace("Bearer ", "");
-    const { id } = verifyJwt(parsedToken);
-    const user = await User.findById(id);
-    if (!user || user.role !== "admin") {
-      const error = new Error("Access only allowed for admin");
-      error.statusCode = 403;
-      throw error;
-    }
-    user.password = null;
-    req.user = user;
-    next();
-  } catch (error) {
-    next(error);
-  }
-};
 
-module.exports = { isAuth, isAdmin };
+    const { id } = verifyJwt(token) // Verifica y decodifica el token
+    const user = await User.findById(id) // Busca el usuario por ID
+    if (!user || user.role !== 'admin') {
+      return res
+        .status(403)
+        .json({ message: 'Access restricted to administrators' })
+    }
+
+    // Elimina el campo de contraseña por seguridad
+    user.password = undefined
+    req.user = user // Asocia el usuario autenticado con la solicitud
+    next()
+  } catch (error) {
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token' })
+    }
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Token has expired' })
+    }
+    next(error)
+  }
+}
+
+module.exports = { isAuth, isAdmin }

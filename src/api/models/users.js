@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 
 const userSchema = new mongoose.Schema(
   {
@@ -7,33 +7,33 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: true
     },
     password: { type: String, required: true },
     role: {
       type: String,
-      required: true,
-      enum: ["admin", "user"],
-      default: "user",
+      required: false,
+      enum: ['admin', 'user'],
+      default: 'user'
     },
     favourites: {
       type: mongoose.Types.ObjectId,
       required: false,
-      ref: "champions",
-    },
+      ref: 'champions'
+    }
   },
   {
     timestamps: true,
-    collection: "users",
+    collection: 'users'
   }
-);
+)
 
-userSchema.pre("save", function (next) {
-  if (this.isModified("password") || this.isNew) {
-    this.password = bcrypt.hashSync(this.password, 10);
+userSchema.pre('save', function (next) {
+  if (this.isModified('password') || this.isNew) {
+    this.password = bcrypt.hashSync(this.password, 10)
   }
-  next();
-});
+  next()
+})
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+const User = mongoose.model('User', userSchema)
+module.exports = User

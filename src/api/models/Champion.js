@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const championSchema = new mongoose.Schema(
   {
@@ -7,14 +7,19 @@ const championSchema = new mongoose.Schema(
     role: {
       type: [String],
       required: true,
-      enum: ["fighter", "assasin", "marksman", "tank", "mage", "support"],
+      enum: ['fighter', 'assassin', 'marksman', 'tank', 'mage', 'support']
     },
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    } // Asegúrate de que el campo creator esté definido
   },
   {
     timestamps: true,
-    collection: "champions",
+    collection: 'champions'
   }
-);
+)
 
-const Champion = mongoose.model("champions", championSchema, "champions");
-module.exports = Champion;
+const Champion = mongoose.model('Champion', championSchema)
+module.exports = Champion

@@ -1,13 +1,17 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken')
 
 const generateSign = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "1y",
-  });
-};
+    expiresIn: '1y'
+  })
+}
 
 const verifyJwt = (token) => {
-  return jwt.verify(token, process.env.JWT_SECRET);
-};
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET)
+  } catch (error) {
+    throw new Error('Token verification failed') // O propagar el error como está
+  }
+}
 
-module.exports = { generateSign, verifyJwt };
+module.exports = { generateSign, verifyJwt }
