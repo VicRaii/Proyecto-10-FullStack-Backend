@@ -96,6 +96,50 @@ const loginUser = async (req, res, next) => {
   }
 }
 
+const updateUser = async (req, res, next) => {
+  try {
+    const { userName, email } = req.body
+    const profilePicture = req.file ? req.file.path : null
+
+    const user = await User.findById(req.user._id)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    // Verificar si el nuevo nombre de usuario ya existe
+    if (userName && userName !== user.userName) {
+      const duplicateUser = await User.findOne({ userName })
+      if (duplicateUser) {
+        return res
+          .status(400)
+          .json({ message: 'This UserName is not available' })
+      }
+    }
+
+    // Verificar si el nuevo correo electrónico ya existe
+    if (email && email !== user.email) {
+      const duplicateEmail = await User.findOne({ email })
+      if (duplicateEmail) {
+        return res
+          .status(400)
+          .json({ message: 'This Email is already registered' })
+      }
+    }
+
+    user.userName = userName || user.userName
+    user.email = email || user.email
+    if (profilePicture) {
+      user.profilePicture = profilePicture
+    }
+
+    const updatedUser = await user.save()
+    return res.status(200).json(updatedUser)
+  } catch (error) {
+    console.error('Update Error:', error)
+    next(error)
+  }
+}
+
 const updateUserRole = async (req, res, next) => {
   try {
     const { id } = req.params
@@ -127,5 +171,6 @@ module.exports = {
   getUsers,
   registerUser,
   loginUser,
+  updateUser,
   updateUserRole
 }
