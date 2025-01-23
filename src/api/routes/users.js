@@ -18,6 +18,6 @@ usersRouter.put(
   '/update',
   [isAuth, upload.single('profilePicture')],
   updateUser
-) // Nueva ruta para actualizar el usuario
+)
 
 module.exports = usersRouter

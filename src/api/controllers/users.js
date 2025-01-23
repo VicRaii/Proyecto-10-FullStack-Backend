@@ -1,6 +1,14 @@
 const bcrypt = require('bcrypt')
 const User = require('../models/users')
 const { generateSign } = require('../../config/jwt')
+const cloudinary = require('cloudinary').v2
+
+// Utilidad para extraer el public_id de Cloudinary desde la URL
+const getPublicId = (url) => {
+  const segments = url.split('/')
+  const fileName = segments[segments.length - 1] // Última parte de la URL
+  return fileName.split('.')[0] // Sin la extensión
+}
 
 const getUsers = async (req, res, next) => {
   try {
@@ -13,8 +21,6 @@ const getUsers = async (req, res, next) => {
 
 const registerUser = async (req, res, next) => {
   try {
-    console.log('Request file:', req.file) // Verifica si el archivo está siendo recibido correctamente
-
     const { userName, email, password } = req.body
     const profilePicture = req.file ? req.file.path : null
 
@@ -22,6 +28,7 @@ const registerUser = async (req, res, next) => {
       return res.status(400).json({ message: 'All fields are required' })
     }
 
+    // Validaciones
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: 'Invalid email format' })
@@ -50,14 +57,103 @@ const registerUser = async (req, res, next) => {
       userName,
       email,
       password,
-      profilePicture, // Asegúrate de que se guarda correctamente la URL de Cloudinary
+      profilePicture,
       role: 'user'
     })
 
     const userSaved = await newUser.save()
-    return res.status(201).json(userSaved) // Devuelve el usuario con la URL de la imagen
+
+    const token = generateSign(userSaved._id)
+
+    return res.status(201).json({
+      message: 'Registration successful',
+      user: {
+        id: userSaved._id,
+        userName: userSaved.userName,
+        profilePicture: userSaved.profilePicture,
+        role: userSaved.role
+      },
+      token
+    })
   } catch (error) {
-    console.error('Server Error:', error) // Asegúrate de que el error esté siendo logueado
+    console.error('Server Error:', error)
+    next(error)
+  }
+}
+
+const updateUser = async (req, res, next) => {
+  try {
+    const { userName, email } = req.body
+    const profilePicture = req.file ? req.file.path : null
+
+    const user = await User.findById(req.user._id)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    // Verificar duplicados
+    if (userName && userName !== user.userName) {
+      const duplicateUser = await User.findOne({ userName })
+      if (duplicateUser) {
+        return res
+          .status(400)
+          .json({ message: 'This UserName is not available' })
+      }
+    }
+
+    if (email && email !== user.email) {
+      const duplicateEmail = await User.findOne({ email })
+      if (duplicateEmail) {
+        return res
+          .status(400)
+          .json({ message: 'This Email is already registered' })
+      }
+    }
+
+    // Eliminar imagen anterior si se sube una nueva
+    if (profilePicture && user.profilePicture) {
+      const publicId = getPublicId(user.profilePicture)
+      await cloudinary.uploader.destroy(publicId)
+    }
+
+    user.userName = userName || user.userName
+    user.email = email || user.email
+    if (profilePicture) {
+      user.profilePicture = profilePicture
+    }
+
+    const updatedUser = await user.save()
+
+    return res.status(200).json(updatedUser)
+  } catch (error) {
+    console.error('Update Error:', error)
+    next(error)
+  }
+}
+
+const updateUserRole = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { role } = req.body
+
+    const validRoles = ['admin', 'user']
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({
+        message: `Invalid role. Allowed roles: ${validRoles.join(', ')}`
+      })
+    }
+
+    const user = await User.findById(id)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    user.role = role
+    const updatedUser = await user.save()
+    return res
+      .status(200)
+      .json({ message: 'User role updated successfully', user: updatedUser })
+  } catch (error) {
     next(error)
   }
 }
@@ -93,77 +189,6 @@ const loginUser = async (req, res, next) => {
     return res
       .status(500)
       .json({ message: 'An unexpected error occurred', error: error.message })
-  }
-}
-
-const updateUser = async (req, res, next) => {
-  try {
-    const { userName, email } = req.body
-    const profilePicture = req.file ? req.file.path : null
-
-    const user = await User.findById(req.user._id)
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' })
-    }
-
-    // Verificar si el nuevo nombre de usuario ya existe
-    if (userName && userName !== user.userName) {
-      const duplicateUser = await User.findOne({ userName })
-      if (duplicateUser) {
-        return res
-          .status(400)
-          .json({ message: 'This UserName is not available' })
-      }
-    }
-
-    // Verificar si el nuevo correo electrónico ya existe
-    if (email && email !== user.email) {
-      const duplicateEmail = await User.findOne({ email })
-      if (duplicateEmail) {
-        return res
-          .status(400)
-          .json({ message: 'This Email is already registered' })
-      }
-    }
-
-    user.userName = userName || user.userName
-    user.email = email || user.email
-    if (profilePicture) {
-      user.profilePicture = profilePicture
-    }
-
-    const updatedUser = await user.save()
-    return res.status(200).json(updatedUser)
-  } catch (error) {
-    console.error('Update Error:', error)
-    next(error)
-  }
-}
-
-const updateUserRole = async (req, res, next) => {
-  try {
-    const { id } = req.params
-    const { role } = req.body
-
-    const validRoles = ['admin', 'user']
-    if (!validRoles.includes(role)) {
-      return res.status(400).json({
-        message: `Invalid role. Allowed roles: ${validRoles.join(', ')}`
-      })
-    }
-
-    const user = await User.findById(id)
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' })
-    }
-
-    user.role = role
-    const updatedUser = await user.save()
-    return res
-      .status(200)
-      .json({ message: 'User role updated successfully', user: updatedUser })
-  } catch (error) {
-    next(error)
   }
 }
 
