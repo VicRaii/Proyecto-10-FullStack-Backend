@@ -91,13 +91,23 @@ const updateChampions = async (req, res, next) => {
       return res.status(403).json({ message: 'Unauthorized' })
     }
 
-    const updatedChampion = await Champion.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true
-    })
+    if (req.file) {
+      champion.img = req.file.path
+    }
+    if (req.body.name) {
+      champion.name = req.body.name
+    }
+    if (req.body.role) {
+      champion.role = req.body.role
+    }
 
+    const updatedChampion = await champion.save()
     return res.status(200).json(updatedChampion)
   } catch (error) {
+    console.error(error)
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message })
+    }
     return next(error)
   }
 }

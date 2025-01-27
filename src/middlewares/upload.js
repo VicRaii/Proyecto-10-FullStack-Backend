@@ -20,7 +20,7 @@ const storage = new CloudinaryStorage({
 
     return {
       folder: folderName,
-      allowed_formats: ['jpg', 'png', 'gif', 'jpeg', 'webp']
+      allowed_formats: ['jpg', 'png', 'gif', 'jpeg', 'webp', 'avif']
     }
   }
 })
