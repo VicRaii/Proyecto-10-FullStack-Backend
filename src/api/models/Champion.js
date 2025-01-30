@@ -12,8 +12,8 @@ const championSchema = new mongoose.Schema(
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true
-    } // Asegúrate de que el campo creator esté definido
+      required: false
+    }
   },
   {
     timestamps: true,

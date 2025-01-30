@@ -3,11 +3,10 @@ const User = require('../models/users')
 const { generateSign } = require('../../config/jwt')
 const cloudinary = require('cloudinary').v2
 
-// Utilidad para extraer el public_id de Cloudinary desde la URL
 const getPublicId = (url) => {
   const segments = url.split('/')
-  const fileName = segments[segments.length - 1] // Última parte de la URL
-  return fileName.split('.')[0] // Sin la extensión
+  const fileName = segments[segments.length - 1]
+  return fileName.split('.')[0]
 }
 
 const getUsers = async (req, res, next) => {
@@ -28,7 +27,6 @@ const registerUser = async (req, res, next) => {
       return res.status(400).json({ message: 'All fields are required' })
     }
 
-    // Validaciones
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: 'Invalid email format' })
@@ -91,7 +89,6 @@ const updateUser = async (req, res, next) => {
       return res.status(404).json({ message: 'User not found' })
     }
 
-    // Verificar duplicados
     if (userName && userName !== user.userName) {
       const duplicateUser = await User.findOne({ userName })
       if (duplicateUser) {
@@ -110,7 +107,6 @@ const updateUser = async (req, res, next) => {
       }
     }
 
-    // Eliminar imagen anterior si se sube una nueva
     if (profilePicture && user.profilePicture) {
       const publicId = getPublicId(user.profilePicture)
       await cloudinary.uploader.destroy(publicId)

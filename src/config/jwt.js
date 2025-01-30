@@ -10,7 +10,7 @@ const verifyJwt = (token) => {
   try {
     return jwt.verify(token, process.env.JWT_SECRET)
   } catch (error) {
-    throw new Error('Token verification failed') // O propagar el error como está
+    throw new Error('Token verification failed')
   }
 }
 

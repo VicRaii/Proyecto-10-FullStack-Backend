@@ -13,7 +13,6 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => {
     const folderName = req.body.folder || 'ProfilePictures'
 
-    // Asegúrate de que el archivo sea una imagen
     if (!file.mimetype.startsWith('image/')) {
       throw new Error('El archivo debe ser una imagen')
     }

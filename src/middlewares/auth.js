@@ -8,15 +8,14 @@ const isAuth = async (req, res, next) => {
       return res.status(401).json({ message: 'Authorization token missing' })
     }
 
-    const { id } = verifyJwt(token) // Verifica y decodifica el token
-    const user = await User.findById(id) // Busca el usuario por ID en la base de datos
+    const { id } = verifyJwt(token)
+    const user = await User.findById(id)
     if (!user) {
       return res.status(401).json({ message: 'User not found or invalid' })
     }
 
-    // Elimina el campo de contraseña por seguridad
     user.password = undefined
-    req.user = user // Asocia el usuario autenticado con la solicitud
+    req.user = user
     next()
   } catch (error) {
     if (error.name === 'JsonWebTokenError') {
@@ -25,7 +24,7 @@ const isAuth = async (req, res, next) => {
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ message: 'Token has expired' })
     }
-    next(error) // Maneja otros errores
+    next(error)
   }
 }
 
@@ -36,17 +35,16 @@ const isAdmin = async (req, res, next) => {
       return res.status(401).json({ message: 'Authorization token missing' })
     }
 
-    const { id } = verifyJwt(token) // Verifica y decodifica el token
-    const user = await User.findById(id) // Busca el usuario por ID
+    const { id } = verifyJwt(token)
+    const user = await User.findById(id)
     if (!user || user.role !== 'admin') {
       return res
         .status(403)
         .json({ message: 'Access restricted to administrators' })
     }
 
-    // Elimina el campo de contraseña por seguridad
     user.password = undefined
-    req.user = user // Asocia el usuario autenticado con la solicitud
+    req.user = user
     next()
   } catch (error) {
     if (error.name === 'JsonWebTokenError') {

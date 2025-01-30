@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
-const Champion = require("../../api/models/Champion");
+require('dotenv').config()
+const mongoose = require('mongoose')
+const Champion = require('../../api/models/Champion')
 const {
   bandleCity,
   bilgewater,
@@ -14,40 +15,40 @@ const {
   shadowIsles,
   runeterra,
   theVoid,
-  zaun,
-} = require("../../data/champions");
+  zaun
+} = require('../../data/champions')
 
 const launchSeed = async () => {
   try {
-    console.log("Connecting to MongoDB...");
+    console.log('Connecting to MongoDB...')
 
-    await mongoose.connect(process.env.DB_URL);
-    console.log("Connected to MongoDB");
+    await mongoose.connect(process.env.DB_URL)
+    console.log('Connected to MongoDB')
 
-    await Champion.collection.drop();
-    console.log("Champions collection dropped");
+    await Champion.collection.drop()
+    console.log('Champions collection dropped')
 
-    await Champion.insertMany(bandleCity);
-    await Champion.insertMany(bilgewater);
-    await Champion.insertMany(demacia);
-    await Champion.insertMany(freljord);
-    await Champion.insertMany(ionia);
-    await Champion.insertMany(ixtal);
-    await Champion.insertMany(targon);
-    await Champion.insertMany(noxus);
-    await Champion.insertMany(piltover);
-    await Champion.insertMany(shurima);
-    await Champion.insertMany(shadowIsles);
-    await Champion.insertMany(runeterra);
-    await Champion.insertMany(theVoid);
-    await Champion.insertMany(zaun);
-    console.log("Champions inserted");
+    await Champion.insertMany(bandleCity)
+    await Champion.insertMany(bilgewater)
+    await Champion.insertMany(demacia)
+    await Champion.insertMany(freljord)
+    await Champion.insertMany(ionia)
+    await Champion.insertMany(ixtal)
+    await Champion.insertMany(targon)
+    await Champion.insertMany(noxus)
+    await Champion.insertMany(piltover)
+    await Champion.insertMany(shurima)
+    await Champion.insertMany(shadowIsles)
+    await Champion.insertMany(runeterra)
+    await Champion.insertMany(theVoid)
+    await Champion.insertMany(zaun)
+    console.log('Champions inserted')
 
-    await mongoose.disconnect();
-    console.log("Disconnected from database");
+    await mongoose.disconnect()
+    console.log('Disconnected from database')
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error)
   }
-};
+}
 
-launchSeed();
+launchSeed()

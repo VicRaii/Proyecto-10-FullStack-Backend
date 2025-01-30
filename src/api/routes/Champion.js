@@ -6,8 +6,7 @@ const {
   getChampionsById,
   getChampions,
   updateChampions,
-  postChampions,
-  getMyChampions
+  postChampions
 } = require('../controllers/Champion')
 
 const championsRouter = require('express').Router()
