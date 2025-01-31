@@ -17,7 +17,6 @@ const getUsers = async (req, res, next) => {
     next(error)
   }
 }
-
 const registerUser = async (req, res, next) => {
   try {
     const { userName, email, password } = req.body
@@ -51,10 +50,6 @@ const registerUser = async (req, res, next) => {
         .json({ message: 'This Email is already registered' })
     }
 
-    if (!profilePicture) {
-      return res.status(400).json({ message: 'Profile picture is required' })
-    }
-
     const newUser = new User({
       userName,
       email,
@@ -63,13 +58,13 @@ const registerUser = async (req, res, next) => {
       role: 'user'
     })
 
+    // Guardar usuario
+    let userSaved
     try {
-      const userSaved = await newUser.save()
-    } catch (error) {
-      if (error.name === 'ValidationError') {
-        return res.status(400).json({ message: error.message })
-      }
-      next(error)
+      userSaved = await newUser.save()
+    } catch (saveError) {
+      console.error('Save error:', saveError)
+      return res.status(500).json({ message: 'Failed to save user' })
     }
 
     const token = generateSign(userSaved._id)
@@ -85,8 +80,8 @@ const registerUser = async (req, res, next) => {
       token
     })
   } catch (error) {
-    console.error('Server Error:', error)
-    next(error)
+    console.error('Register Error:', error)
+    return next(error)
   }
 }
 
