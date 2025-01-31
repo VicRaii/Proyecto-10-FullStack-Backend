@@ -13,8 +13,10 @@ const corsOptions = {
   origin: [
     'https://proyecto-10-full-stack-frontend.vercel.app',
     'https://proyecto-10-full-stack-frontend-cnkei7tfg-vicraiis-projects.vercel.app',
-    'http://localhost:5173' // Local server for testing
+    'https://proyecto-10-full-stack-frontend-d27xvovzl-vicraiis-projects.vercel.app', // Agrega el dominio correcto
+    'http://localhost:5173'
   ],
+
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
