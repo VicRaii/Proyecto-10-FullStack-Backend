@@ -10,8 +10,11 @@ const app = express()
 app.use(express.json())
 
 const corsOptions = {
-  // origin: "https://proyecto-10-full-stack-frontend.vercel.app",
-  origin: 'http://localhost:5173', //! BORRAR AL TERMINAR PRUEBAS
+  origin: [
+    'https://proyecto-10-full-stack-frontend.vercel.app',
+    'https://proyecto-10-full-stack-frontend-cnkei7tfg-vicraiis-projects.vercel.app', // Agregar el origen correcto aquí
+    'http://localhost:5173' // Server de pruebas
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
