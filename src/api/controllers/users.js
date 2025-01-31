@@ -51,6 +51,10 @@ const registerUser = async (req, res, next) => {
         .json({ message: 'This Email is already registered' })
     }
 
+    if (!profilePicture) {
+      return res.status(400).json({ message: 'Profile picture is required' })
+    }
+
     const newUser = new User({
       userName,
       email,
@@ -59,7 +63,14 @@ const registerUser = async (req, res, next) => {
       role: 'user'
     })
 
-    const userSaved = await newUser.save()
+    try {
+      const userSaved = await newUser.save()
+    } catch (error) {
+      if (error.name === 'ValidationError') {
+        return res.status(400).json({ message: error.message })
+      }
+      next(error)
+    }
 
     const token = generateSign(userSaved._id)
 
